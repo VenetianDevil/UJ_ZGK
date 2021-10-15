@@ -96,6 +96,8 @@ void uj_image_set_pixel(uj_image * image, int x, int y, uj_rgb color);
 void uj_image_fill_rectangle(uj_image * image, int x1, int y1,
         int x2, int y2, uj_rgb color);
 
+void uj_image_draw_line(uj_image * image, int x1, int y1, int x2, int y2, uj_rgb color);
+
 /**
  * Zapisuje obraz w formacie PPM do podanego strumienia. Zwraca "true" jeśli
  * operacja się powiodła, "false" jeśli po drodze wystąpił błąd we/wy.
@@ -179,7 +181,7 @@ void uj_image_fill_rectangle(uj_image * image, int x1, int y1,
 {
     int x, y;
     // wykracza prawo/dół
-    if (x1>image->width || y1>image->height) return;
+    if (x1>=image->width || y1>=image->height) return;
     if (x2>=image->width) x2 = image->width-1;
     if (y2>=image->height) y2 = image->height-1;
 
@@ -192,6 +194,46 @@ void uj_image_fill_rectangle(uj_image * image, int x1, int y1,
         for (y = y1; y <= y2; ++y) {
             image->data[ x * image->height + y ] = color;
         }
+    }
+}
+
+void uj_image_draw_line(uj_image * image, int x1, int y1,
+        int x2, int y2, uj_rgb color)
+{
+    float a = (float)(y1-y2)/(x1-x2);
+    float b = (float)(y1-(a*x1));
+
+    // przycinanie poczatku lini (zakladam ze linie zawsze rysujemy od lewej do prawej)
+    if(x1<0 || y1<0 || y1>=image->height) {
+        x1=0;
+        if(b<0){
+            y1=0;
+            x1=-b/a;
+            if(x1>x2){
+                y1=image->height-1;
+                x1=(y1-b)/a;
+            }
+        }
+        y1=b;
+    }
+    // przycinanie konca lini
+    if(x2>=image->width || y2<0 || y2>=image->height) {
+        x2=image->width-1;
+        y2=a*x2+b;
+        if(y2<0 || y2>=image->height){
+            y2=0;
+            x2=-b/a;
+            if(x2<x1){
+                y2=image->height-1;
+                x2=(y2-b)/a;
+            }
+        }
+    }
+
+    // Nowa, korzystająca ze wskaźników wersja algorytmu.
+    for (int x = x1; x <= x2; ++x) {
+        int y=a*x+b;
+        image->data[ x * image->height + y ] = color; 
     }
 }
 
@@ -254,6 +296,7 @@ void rysuj(uj_image * image)
     uj_rgb bialy = { 255, 255, 255 };
     uj_rgb pomaranczowy = { 255, 165, 0 };
     uj_rgb morski = { 46, 139, 87 };
+    uj_rgb pink = { 255, 192, 203 };
 
     int w = uj_image_get_width(image);
     int h = uj_image_get_height(image);
@@ -261,6 +304,7 @@ void rysuj(uj_image * image)
     uj_image_fill_rectangle(image, -1, 0, w-1, h-1, bialy);
     uj_image_fill_rectangle(image, 10, 0, w+10, h/2-1, pomaranczowy);
     uj_image_fill_rectangle(image, 0, h/2, w/2-1, h-1, morski);
+    uj_image_draw_line(image, -3, h/2, w/2-1, h-1, pink);
 }
 
 int main(void)

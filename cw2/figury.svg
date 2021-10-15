@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="360pt" height="144pt" viewBox="0 0 360 144" version="1.1">
+<defs>
+<linearGradient id="linear0" gradientUnits="userSpaceOnUse" x1="200" y1="0" x2="100" y2="0" gradientTransform="matrix(0.5,0,0,0.5,0,0)">
+<stop offset="0" style="stop-color:rgb(0%,100%,0%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(0%,0%,0%);stop-opacity:1;"/>
+</linearGradient>
+<linearGradient id="linear1" gradientUnits="userSpaceOnUse" x1="200" y1="0" x2="100" y2="0" gradientTransform="matrix(0.5,0,0,0.5,100,0)">
+<stop offset="0" style="stop-color:rgb(0%,100%,0%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(0%,0%,0%);stop-opacity:1;"/>
+</linearGradient>
+<linearGradient id="linear2" gradientUnits="userSpaceOnUse" x1="200" y1="0" x2="100" y2="0" gradientTransform="matrix(0.5,0,0,0.5,0,50)">
+<stop offset="0" style="stop-color:rgb(0%,100%,0%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(0%,0%,0%);stop-opacity:1;"/>
+</linearGradient>
+<linearGradient id="linear3" gradientUnits="userSpaceOnUse" x1="200" y1="0" x2="100" y2="0" gradientTransform="matrix(0.5,0,0,0.5,100,50)">
+<stop offset="0" style="stop-color:rgb(0%,100%,0%);stop-opacity:1;"/>
+<stop offset="1" style="stop-color:rgb(0%,0%,0%);stop-opacity:1;"/>
+</linearGradient>
+</defs>
+<g id="surface1">
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,30%,100%);stroke-opacity:1;stroke-miterlimit:10;" d="M 50 50 L 100 50 L 120 75 L 75 100 L 30 75 Z M 50 50 " transform="matrix(0.5,0,0,0.5,0,0)"/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#linear0);" d="M 75 25 L 100 25 C 100 38.808594 88.808594 50 75 50 Z M 75 25 "/>
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,30%,100%);stroke-opacity:1;stroke-miterlimit:10;" d="M 50 50 L 100 50 L 120 75 L 75 100 L 30 75 Z M 50 50 " transform="matrix(0.5,0,0,0.5,100,0)"/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#linear1);" d="M 175 25 L 200 25 C 200 38.808594 188.808594 50 175 50 Z M 175 25 "/>
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,30%,100%);stroke-opacity:1;stroke-miterlimit:10;" d="M 50 50 L 100 50 L 120 75 L 75 100 L 30 75 Z M 50 50 " transform="matrix(0.5,0,0,0.5,0,50)"/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#linear2);" d="M 75 75 L 100 75 C 100 88.808594 88.808594 100 75 100 Z M 75 75 "/>
+<path style="fill:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,30%,100%);stroke-opacity:1;stroke-miterlimit:10;" d="M 50 50 L 100 50 L 120 75 L 75 100 L 30 75 Z M 50 50 " transform="matrix(0.5,0,0,0.5,100,50)"/>
+<path style=" stroke:none;fill-rule:nonzero;fill:url(#linear3);" d="M 175 75 L 200 75 C 200 88.808594 188.808594 100 175 100 Z M 175 75 "/>
+</g>
+</svg>

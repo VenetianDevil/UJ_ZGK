@@ -104,8 +104,6 @@ void uj_image_set_pixel(uj_image * image, int x, int y, uj_rgb color);
 void uj_image_fill_rectangle(uj_image * image, int x1, int y1,
         int x2, int y2, uj_rgb color);
 
-void uj_image_draw_line(uj_image * image, int x1, int y1, int x2, int y2, uj_rgb color);
-
 /**
  * Zapisuje obraz w formacie PPM do podanego strumienia. Strumień musi być
  * strumieniem binarnym. Zwraca "true" jeśli operacja się powiodła, "false"
@@ -225,19 +223,6 @@ void uj_image_set_pixel(uj_image * image, int x, int y, uj_rgb color)
 }
 
 void uj_image_fill_rectangle(uj_image * image, int x1, int y1,
-        int x2, int y2, uj_rgb color)
-{
-    // Nowa, korzystająca ze wskaźników wersja algorytmu.
-    for (int y = y1; y <= y2; ++y) {
-        uj_rgb * p = image->data + x1 + y * image->row_stride;
-        uj_rgb * q = image->data + x2 + y * image->row_stride;
-        while (p <= q) {
-            *p++ = color;
-        }
-    }
-}
-
-void uj_image_draw_line(uj_image * image, int x1, int y1,
         int x2, int y2, uj_rgb color)
 {
     // Nowa, korzystająca ze wskaźników wersja algorytmu.
