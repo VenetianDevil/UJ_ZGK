@@ -29,6 +29,13 @@ trzeba dodaj do sceny dodatkowe bryły.
 #include <osgViewer/Viewer>
 #include <osgDB/ReadFile>
 #include <osg/MatrixTransform>
+#include <osg/AnimationPath>
+#include <osgGA/EventVisitor>
+#include <osgGA/GUIEventAdapter>
+
+using namespace std;
+
+osgViewer::Viewer viewer;
 
 osg::Node * stworz_scene()
 {
@@ -48,14 +55,73 @@ osg::Node * stworz_scene()
   return geom_node;
 }
 
-void addMonkey(osg::Group* root, float x, float y, float z) {
+class ModelController : public osgGA::GUIEventHandler {
+  public:
+    ModelController( osg::MatrixTransform *node ) : _model(node) {}
+    virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
+  protected:
+    osg::MatrixTransform* _model;
+};
+
+bool ModelController::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
+{
+    (void) aa;
+    // if (!_model.valid())
+    //     return false;
+    osg::Matrix matrix = _model->getMatrix();
+    switch (ea.getEventType())
+    {
+    case osgGA::GUIEventAdapter::KEYDOWN:
+        switch (ea.getKey())
+        {
+        case 'a': case 'A':
+            matrix *= osg::Matrix::rotate(-0.1, osg::Z_AXIS);
+            break;
+        case 'd': case 'D':
+            matrix *= osg::Matrix::rotate( 0.1, osg::Z_AXIS);
+            break;
+        case 'w': case 'W':
+            matrix *= osg::Matrix::rotate(-0.1, osg::X_AXIS);
+            break;
+        case 's': case 'S':
+            matrix *= osg::Matrix::rotate( 0.1, osg::X_AXIS);
+            break;
+        default:
+            break;
+        }
+        _model->setMatrix(matrix);
+        break;
+    default:
+        break;
+    }
+    return false;
+}
+
+void addMonkey(osg::Group* root, float x, float y, float z, bool animate = false, bool handle = false) {
     // malpka
     osg::Node* modelNode = osgDB::readNodeFile("./suzanne.obj");
     osg::ref_ptr<osg::MatrixTransform> mt = new osg::MatrixTransform;
     mt->setMatrix(osg::Matrix::translate(x, y, z));
     mt->addChild(modelNode);
 
+    if(!!animate){
+      // https://osgart.org/stuff/rigid_body_animation/
+      osg::AnimationPath* _animationPath = new osg::AnimationPath;
+      _animationPath->setLoopMode(osg::AnimationPath::SWING);
+      _animationPath->insert(0.0, osg::AnimationPath::ControlPoint(osg::Vec3d(x, y, z)));
+      _animationPath->insert(1.0, osg::AnimationPath::ControlPoint(osg::Vec3d(x, y, z+2)));
+
+      mt->setUpdateCallback(new osg::AnimationPathCallback(_animationPath));
+    }
+
     root->addChild(mt.get());
+
+    if(!!handle){
+      // https://sudonull.com/post/1335-OpenSceneGraph-Event-Handling
+      ModelController* mcontrol = new ModelController(mt.get());
+      viewer.addEventHandler(mcontrol);
+    }
+
 }
 
 int main(int argc, char * argv[])
@@ -65,11 +131,10 @@ int main(int argc, char * argv[])
     // również zgrubne komunikaty diagnostyczne odkomentuj powyższą linię
 
     osg::Node * scn = stworz_scene();
-    osgViewer::Viewer viewer;
 
     osg::Group* root = new osg::Group();
-    addMonkey(root, 0, 0, 0);
-    addMonkey(root, -5, 0, 0);
+    addMonkey(root, 0, 0, 0, false, true);
+    addMonkey(root, -5, 0, 0, true);
     addMonkey(root, 5, 0, 0);
 
     root->addChild(scn);
