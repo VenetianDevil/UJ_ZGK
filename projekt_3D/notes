@@ -1,0 +1,15 @@
+
+https://3dmdb.com/en/3d-model/cannon/436227/?q=cannon
+https://www.turbosquid.com/3D-Models/free-cannon-3d-model/547487?referral=3dmdb#
+
+
+http://lists.openscenegraph.org/pipermail/osg-users-openscenegraph.org/2008-March/008908.html
+https://www.dei.isep.ipp.pt/~matos/cadeiras/cgra/OpenSceneGraphReferenceDocs/classosg_1_1BoundingBox.html
+https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.102.8307&rep=rep1&type=pdf
+https://weber.itn.liu.se/~karlu20/tmp/OpenSceneGraph/classosg_1_1Callback.html
+https://weber.itn.liu.se/~karlu20/tmp/OpenSceneGraph/classosg_1_1AnimationPathCallback.html
+https://github.com/openscenegraph/OpenSceneGraph/blob/master/examples/osgcallback/osgcallback.cpp
+https://stackoverflow.com/questions/36830660/how-to-get-aabb-bounding-box-from-matrixtransform-node-in-openscenegraph
+https://www.programmerall.com/article/548588669/
+
+https://github.com/openscenegraph/OpenSceneGraph/blob/master/src/osg/AnimationPath.cpp

@@ -32,16 +32,25 @@ trzeba dodaj do sceny dodatkowe bryły.
 #include <osg/AnimationPath>
 #include <osgGA/EventVisitor>
 #include <osgGA/GUIEventAdapter>
+#include <osg/ComputeBoundsVisitor>
 
 #include <iostream>
 #include <cmath>
 
 using namespace std;
+using namespace osg;
 
 osgViewer::Viewer viewer;
 osg::Group* root = new osg::Group();
 osg::ref_ptr<osg::MatrixTransform> mt_barrel = new osg::MatrixTransform;
 osg::ref_ptr<osg::MatrixTransform> mt_base = new osg::MatrixTransform;
+osg::ref_ptr<osg::MatrixTransform> mt_target = new osg::MatrixTransform;
+osg::ref_ptr<osg::MatrixTransform> mt_ball = new osg::MatrixTransform;
+
+osg::BoundingBox bb_target;
+osg::BoundingBox bb_ball;
+
+int plyer_points = 0;
 
 class CannonModelController : public osgGA::GUIEventHandler {
   public:
@@ -66,14 +75,14 @@ bool CannonModelController::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIA
             // cout << "z: " <<  matrix.getRotate().z() << endl;
             // cout << "w: " <<  matrix.getRotate().w() << endl;            
             if(matrix.getRotate().z() < 0.5){
-              matrix *= osg::Matrix::rotate( 0.1, osg::Z_AXIS);
+              matrix *= osg::Matrix::rotate( M_PI/180, osg::Z_AXIS);
             }
             break;
         case 'd': case 'D':
             // cout << "z: " <<  matrix.getRotate().z() << endl;
             // cout << "w: " <<  matrix.getRotate().w() << endl;
             if(matrix.getRotate().z() > -0.5){
-              matrix *= osg::Matrix::rotate(-0.1, osg::Z_AXIS);
+              matrix *= osg::Matrix::rotate(-M_PI/180, osg::Z_AXIS);
             }
             break;
         case ' ':
@@ -113,14 +122,14 @@ bool BarrelModelController::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIA
             // cout << "x: " <<  matrix.getRotate().x() << endl;
             // cout << "w: " <<  matrix.getRotate().w() << endl;
             if(matrix.getRotate().x() < 0){
-              matrix *= osg::Matrix::rotate( 0.1, osg::X_AXIS);
+              matrix *= osg::Matrix::rotate( M_PI/180, osg::X_AXIS);
             }
             break;
         case 's': case 'S':
             // cout << "x: " <<  matrix.getRotate().x() << endl;
             // cout << "w: " <<  matrix.getRotate().w() << endl;            
             if(matrix.getRotate().x() > -0.7){
-              matrix *= osg::Matrix::rotate(-0.1, osg::X_AXIS);
+              matrix *= osg::Matrix::rotate(-M_PI/180, osg::X_AXIS);
             }
             break;
         default:
@@ -134,6 +143,47 @@ bool BarrelModelController::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIA
     return false;
 }
 
+// class CollisionCallback : public osg::NodeCallback
+// {
+//   virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+//   {
+//     // cout << "checking " << bb_ball.center().x() << bb_ball.center().y() << bb_ball.center().z() << endl;
+//     if(bb_ball.intersects(bb_target)){
+//       cout << "hit!" << endl;
+//       // mt_barrel->removeChild(mt_ball.get());
+//       // root->removeChild(mt_target.get());
+//       plyer_points += 1;
+//     }
+//   }
+// };
+
+// void AnimationPathCallback::operator()(Node* node, NodeVisitor* nv)
+// {
+//   cout << "oper: " << bb_ball.intersects(bb_target) << endl;
+//   cout << _latestTime << endl;
+//   cout << nv->getFrameStamp()->getSimulationTime() << endl;
+//   _animationPath->clear();
+//     if (!_pause) {
+//       update(*node);
+//     } else {
+//       cout << "koniec animacji" << endl;
+//     }
+
+//     // must call any nested node callbacks and continue subgraph traversal.
+//     NodeCallback::traverse(node,nv);
+// }
+
+// void AnimationPathCallback::update (osg::Node &node) {
+//   // cout << "checking " << bb_ball.center().x() << bb_ball.center().y() << bb_ball.center().z() << endl;
+//   cout << "hit?" << endl;
+//   if(bb_ball.intersects(bb_target)){
+//     cout << "hit!" << endl;
+//     // mt_barrel->removeChild(mt_ball.get());
+//     // root->removeChild(mt_target.get());
+//     plyer_points += 1;
+//   }
+// }
+
 void CannonModelController::addCannonBall() {
     osg::Geode * geom_node_ball = new osg::Geode();
 
@@ -146,27 +196,34 @@ void CannonModelController::addCannonBall() {
     drw_ball->setColor(osg::Vec4(0.0, 0.0, 0.0, 1.0));
     geom_node_ball->addDrawable(drw_ball);
 
-    osg::ref_ptr<osg::MatrixTransform> mt_ball = new osg::MatrixTransform;
     mt_ball->addChild(geom_node_ball);
     mt_barrel->addChild(mt_ball.get());
     // mt_ball->setMatrix(osg::Matrix::rotate(M_PI/2, osg::X_AXIS)*osg::Matrix::translate(0, 1.7, 1.5));
+
+    osg::ComputeBoundsVisitor cbv;
+    mt_ball->accept(cbv);
+    bb_ball = cbv.getBoundingBox();
 
     // animate
     osg::AnimationPath* _animationPath = new osg::AnimationPath;
     _animationPath->setLoopMode(osg::AnimationPath::NO_LOOPING);
     _animationPath->insert(0.0, osg::AnimationPath::ControlPoint(osg::Vec3d(x, y, z)));
-    _animationPath->insert(1.0, osg::AnimationPath::ControlPoint(osg::Vec3d(x, y, z+35))); //1+y
+    _animationPath->insert(1.0, osg::AnimationPath::ControlPoint(osg::Vec3d(x, y, z+25))); //1+y
 
-    mt_ball->setUpdateCallback(new osg::AnimationPathCallback(_animationPath));
-
-    // root->addChild(mt_ball.get());
+    mt_ball->setUpdateCallback(new AnimationPathCallback(_animationPath));
+    // root->setUpdateCallback(new CollisionCallback());
 }
 
 void addTarget(){
     osg::Node* modelNode = osgDB::readNodeFile("./Pumkin.obj");
-    osg::ref_ptr<osg::MatrixTransform> mt_target = new osg::MatrixTransform;
-    mt_target->setMatrix(osg::Matrix::translate(rand() % 30, rand() % 30, rand() % 20));
+    // osg::ref_ptr<osg::MatrixTransform> mt_target = new osg::MatrixTransform;
+    mt_target->setMatrix(osg::Matrix::translate(0, 10, 0));
     mt_target->addChild(modelNode);
+
+    osg::ComputeBoundsVisitor cbv;
+    mt_target->accept(cbv);
+    bb_target = cbv.getBoundingBox();
+
 
     root->addChild(mt_target.get());
 }
@@ -178,7 +235,7 @@ osg::Node * stworz_scene() {
   texture->setImage(wood);
  
   osg::ShapeDrawable * drw = new osg::ShapeDrawable();
-  drw->setShape(new osg::Box(osg::Vec3(0, 15, -1.5), 60.0, 40, .5));
+  drw->setShape(new osg::Box(osg::Vec3(0, 15, -1.5), 40.0, 40, .5));
  
   osg::Geode * geom_node = new osg::Geode();
   geom_node->addDrawable(drw);
